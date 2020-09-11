@@ -7,8 +7,6 @@ let totais = {
 
 const calcular = (transacoes) => {
 
-    console.log(transacoes);
-
     if (transacoes && transacoes !== null && transacoes.length > 0) {
 
         for (let i = 0; i < transacoes.length; i++) {

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import * as api from './api/apiService';
+import Data from './components/Data';
 import * as totalizador from './helper/totalizador';
+
 
 export default function App() {
 
@@ -9,6 +11,7 @@ export default function App() {
   const [totalReceitas, setTotalReceitas] = useState(0);
   const [totalDespesas, setTotalDespesas] = useState(0);
   const [saldo, setSaldo] = useState(0);
+
 
   useEffect(() => {
     const getTransactions = async () => {
@@ -20,7 +23,6 @@ export default function App() {
       setTotalDespesas(totais.despesas);
       setTotalReceitas(totais.receitas);
       setSaldo(totais.saldo);
-
     };
     getTransactions();
 
@@ -33,15 +35,7 @@ export default function App() {
       <div className="container center">
         <h3 className="center">Controle Financeiro Pessoal</h3>
       </div>
-      <div id="periodo">
-        <button >&lt;</button>
-        <select className="browser-default" style={{ display: 'inline' }}>
-          <option value="11">Nov/2020</option>
-          <option value="12">Dez/2020</option>
-          <option value="1">Jan/2021</option>
-        </select>
-        <button>&gt;</button>
-      </div>
+      <Data />
       <div id='sumario'>
         <span>Lançamentos:{totalLancamentos}</span>
         <span>Receitas:{totalReceitas}</span>
