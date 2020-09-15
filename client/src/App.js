@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import * as api from './api/apiService';
 import Data from './components/Data';
 import * as totalizador from './helper/totalizador';
 
@@ -12,22 +11,17 @@ export default function App() {
   const [totalDespesas, setTotalDespesas] = useState(0);
   const [saldo, setSaldo] = useState(0);
 
+  const obterTransacoes = (transacoes) => {
 
-  useEffect(() => {
-    const getTransactions = async () => {
-      const transactions = await api.getAllTransactions();
-      setAllTransactions(transactions);
+    setAllTransactions(transacoes);
+    const totais = totalizador.calcular(Object.assign(transacoes));
+    setTotalLancamentos(totais.lancamentos);
+    setTotalDespesas(totais.despesas);
+    setTotalReceitas(totais.receitas);
+    setSaldo(totais.saldo);
+    console.log(totais);
 
-      const totais = totalizador.calcular(transactions);
-      setTotalLancamentos(totais.lancamentos);
-      setTotalDespesas(totais.despesas);
-      setTotalReceitas(totais.receitas);
-      setSaldo(totais.saldo);
-    };
-    getTransactions();
-
-  }, []);
-
+  };
 
   return (
     <div>
@@ -35,7 +29,7 @@ export default function App() {
       <div className="container center">
         <h3 className="center">Controle Financeiro Pessoal</h3>
       </div>
-      <Data />
+      <Data carregarTransacoes={obterTransacoes} />
       <div id='sumario'>
         <span>Lançamentos:{totalLancamentos}</span>
         <span>Receitas:{totalReceitas}</span>
@@ -46,12 +40,17 @@ export default function App() {
         <button>
           + Novo Lançamento
       </button>
-        <input type='text' placeholder='Filtro'></input>
+        <input type='text' placeholder="filtro"></input>
       </div>
       <div id='listagem'>
         {(allTransactions && allTransactions.length > 0) && (
           allTransactions.map((item) => {
-            return (<p key={item._id}>{item.description}</p>)
+            return (<p key={item._id}>
+              Descrição: {item.description}<br />
+              Categoria: {item.category}<br />
+              Tipo: {item.type}<br />
+              Valor: {item.value}<br />
+            </p>)
           })
         )}
       </div>
