@@ -3,6 +3,7 @@ let datas = [];
 
 const gerarDatas = () => {
 
+    datas.push({ valor: '--', display: '' })
     datas.push({ valor: '2019-01', display: 'Jan/2019' })
     datas.push({ valor: '2019-02', display: 'Fev/2019' })
     datas.push({ valor: '2019-03', display: 'Mar/2019' })

@@ -1,37 +1,29 @@
 import React, { useEffect, useState } from 'react'
 import * as utils from '../helper/utils';
-import * as api from '../api/apiService';
 
-export default function Data({ carregarTransacoes }) {
+export default function Data({ carregarPeriodo }) {
 
     const [datas, setDatas] = useState([]);
-    const [periodoConsulta, setPeriodoConsulta] = useState('2019-01');
-    const [transacoes, setTransacoes] = useState([]);
+    const [periodoSelecionado, setPeriodoSelecionado] = useState('--');
 
-    const ObterPeriodoConsulta = (event) => {
-        setPeriodoConsulta(event.target.value);
+    const onChangePeriodoConsulta = (event) => {
+        carregarPeriodo(event.target.value);
+        setPeriodoSelecionado(event.target.value);
     }
-
-    useEffect(() => {
-        const obterTransacoes = async () => {
-            const dados = await api.getAllTransactions(periodoConsulta);
-            setTransacoes(dados);
-            carregarTransacoes(dados);
-        }
-
-        obterTransacoes();
-    }, [periodoConsulta]);
 
     useEffect(() => {
         setDatas(utils.gerarDatas());
     }, []);
 
+
+    const { flexRowStyle, selectStyle } = styles;
     return (
-        <div>
+        <div className='center' style={flexRowStyle}>
             <button>&lt;</button>
             <select className='browser-default'
-                style={{ display: 'inline' }}
-                onChange={ObterPeriodoConsulta}>
+                style={selectStyle}
+                value={periodoSelecionado}
+                onChange={onChangePeriodoConsulta}>
                 {
                     datas.map((data) => {
                         const { valor, display } = data
@@ -45,3 +37,18 @@ export default function Data({ carregarTransacoes }) {
         </div >
     )
 }
+
+const styles = {
+    flexRowStyle: {
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        margin: '10px',
+    },
+
+    selectStyle: {
+        width: '200px',
+        fontFamily: "'Fira Code Retina', Consolas, monospace, Arial",
+    },
+};

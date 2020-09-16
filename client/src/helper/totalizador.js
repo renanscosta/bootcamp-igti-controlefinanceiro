@@ -9,6 +9,13 @@ const calcular = (transacoes) => {
 
     if (transacoes && transacoes !== null && transacoes.length > 0) {
 
+        totais = {
+            lancamentos: 0,
+            receitas: 0,
+            despesas: 0,
+            saldo: 0
+        };
+
         for (let i = 0; i < transacoes.length; i++) {
             if (transacoes[i].type === '+') {
                 totais.receitas += transacoes[i].value;

@@ -1,27 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import Data from './components/Data';
 import * as totalizador from './helper/totalizador';
+import * as api from './api/apiService';
 
 
 export default function App() {
 
   const [allTransactions, setAllTransactions] = useState([]);
-  const [totalLancamentos, setTotalLancamentos] = useState(0);
-  const [totalReceitas, setTotalReceitas] = useState(0);
-  const [totalDespesas, setTotalDespesas] = useState(0);
-  const [saldo, setSaldo] = useState(0);
+  const [sumario, setSumario] = useState({});
+  const [periodoCorrente, setPeriodoCorrente] = useState(null);
 
-  const obterTransacoes = (transacoes) => {
-
-    setAllTransactions(transacoes);
-    const totais = totalizador.calcular(Object.assign(transacoes));
-    setTotalLancamentos(totais.lancamentos);
-    setTotalDespesas(totais.despesas);
-    setTotalReceitas(totais.receitas);
-    setSaldo(totais.saldo);
-    console.log(totais);
+  const obterPeriodo = (periodo) => {
+    setPeriodoCorrente(periodo);
 
   };
+
+  useEffect(() => {
+    const obterTransacoesAPI = async () => {
+
+      if (periodoCorrente === "--") {
+        setAllTransactions([]);
+        return;
+      }
+
+      const transacoes = await api.getAllTransactions(periodoCorrente);
+      setAllTransactions(transacoes);
+
+      const somatorio = totalizador.calcular(transacoes);
+      setSumario(somatorio);
+
+    }
+    obterTransacoesAPI(periodoCorrente);
+
+  }, [periodoCorrente])
 
   return (
     <div>
@@ -29,12 +40,13 @@ export default function App() {
       <div className="container center">
         <h3 className="center">Controle Financeiro Pessoal</h3>
       </div>
-      <Data carregarTransacoes={obterTransacoes} />
+
+      <Data carregarPeriodo={obterPeriodo} />
       <div id='sumario'>
-        <span>Lançamentos:{totalLancamentos}</span>
-        <span>Receitas:{totalReceitas}</span>
-        <span>Despesas:{totalDespesas}</span>
-        <span>Saldo:{saldo}</span>
+        <span>Lançamentos:{sumario.lancamentos}</span>
+        <span>Receitas:{sumario.receitas}</span>
+        <span>Despesas:{sumario.despesas}</span>
+        <span>Saldo:{sumario.saldo}</span>
       </div>
       <div id='novoEFiltro'>
         <button>
