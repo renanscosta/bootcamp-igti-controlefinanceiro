@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import * as utils from '../helper/utils';
+import ArrowButton from './ArrowButton';
 
 export default function Data({ carregarPeriodo }) {
 
@@ -11,6 +12,29 @@ export default function Data({ carregarPeriodo }) {
         setPeriodoSelecionado(event.target.value);
     }
 
+    const onClickRight = () => {
+        const index = datas.findIndex((data) => data.valor === periodoSelecionado);
+
+        if (index >= 0) {
+
+            const periodo = datas[index + 1].valor;
+
+            carregarPeriodo(periodo);
+            setPeriodoSelecionado(periodo);
+        }
+    }
+
+    const onClickLeft = () => {
+        const index = datas.findIndex((data) => data.valor === periodoSelecionado);
+        if (index >= 0) {
+
+            const periodo = datas[index - 1].valor;
+
+            carregarPeriodo(periodo);
+            setPeriodoSelecionado(periodo);
+        }
+    }
+
     useEffect(() => {
         setDatas(utils.gerarDatas());
     }, []);
@@ -19,7 +43,8 @@ export default function Data({ carregarPeriodo }) {
     const { flexRowStyle, selectStyle } = styles;
     return (
         <div className='center' style={flexRowStyle}>
-            <button>&lt;</button>
+
+            <ArrowButton type='left' handleButtonClick={onClickLeft} />
             <select className='browser-default'
                 style={selectStyle}
                 value={periodoSelecionado}
@@ -33,7 +58,7 @@ export default function Data({ carregarPeriodo }) {
                     })
                 }
             </select>
-            <button>&gt;</button>
+            <ArrowButton type='right' handleButtonClick={onClickRight} />
         </div >
     )
 }
