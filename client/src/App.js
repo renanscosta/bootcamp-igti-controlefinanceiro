@@ -2,12 +2,19 @@ import React, { useState, useEffect } from 'react';
 import Data from './components/Data';
 import * as totalizador from './helper/totalizador';
 import * as api from './api/apiService';
+import Summary from './components/Summary';
 
+const somatorio_zerado = {
+  lancamentos: 0,
+  receitas: 0,
+  despesas: 0,
+  saldo: 0
+}
 
 export default function App() {
 
   const [allTransactions, setAllTransactions] = useState([]);
-  const [sumario, setSumario] = useState({});
+  const [somatorio, setSomatorio] = useState(somatorio_zerado);
   const [periodoCorrente, setPeriodoCorrente] = useState(null);
 
   const obterPeriodo = (periodo) => {
@@ -20,14 +27,15 @@ export default function App() {
 
       if (periodoCorrente === "--") {
         setAllTransactions([]);
+        setSomatorio(somatorio_zerado)
         return;
       }
 
       const transacoes = await api.getAllTransactions(periodoCorrente);
       setAllTransactions(transacoes);
 
-      const somatorio = totalizador.calcular(transacoes);
-      setSumario(somatorio);
+      const somatorio_aux = totalizador.calcular(transacoes);
+      setSomatorio(somatorio_aux);
 
     }
     obterTransacoesAPI(periodoCorrente);
@@ -35,19 +43,14 @@ export default function App() {
   }, [periodoCorrente])
 
   return (
-    <div>
+    <div className='container'>
       <h2 className="center">Bootcamp Full Stack - Desafio final</h2>
       <div className="container center">
         <h3 className="center">Controle Financeiro Pessoal</h3>
       </div>
 
       <Data carregarPeriodo={obterPeriodo} />
-      <div id='sumario'>
-        <span>Lançamentos:{sumario.lancamentos}</span>
-        <span>Receitas:{sumario.receitas}</span>
-        <span>Despesas:{sumario.despesas}</span>
-        <span>Saldo:{sumario.saldo}</span>
-      </div>
+      <Summary somatorio={somatorio} />
       <div id='novoEFiltro'>
         <button>
           + Novo Lançamento
