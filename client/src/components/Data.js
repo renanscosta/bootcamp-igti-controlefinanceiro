@@ -1,3 +1,4 @@
+import { set } from 'mongoose';
 import React, { useEffect, useState } from 'react'
 import * as utils from '../helper/utils';
 import ArrowButton from './ArrowButton';
@@ -6,11 +7,16 @@ export default function Data({ carregarPeriodo }) {
 
     const [datas, setDatas] = useState([]);
     const [periodoSelecionado, setPeriodoSelecionado] = useState('--');
+    const [ehPrimeiroPeriodo, setEhPrimeiroPeriodo] = useState(false);
+    const [ehUltimoPeriodo, setEhUltimoPeriodo] = useState(false);
 
     const onChangePeriodoConsulta = (event) => {
         carregarPeriodo(event.target.value);
         setPeriodoSelecionado(event.target.value);
     }
+
+    const marcarPrimeiroPeriodo = (index) => index === 0;
+    const marcarUltimoPeriodo = (index) => datas.length - 1 === index;
 
     const onClickRight = () => {
         const index = datas.findIndex((data) => data.valor === periodoSelecionado);
@@ -37,14 +43,25 @@ export default function Data({ carregarPeriodo }) {
 
     useEffect(() => {
         setDatas(utils.gerarDatas());
+        setEhPrimeiroPeriodo(true);
     }, []);
 
+    useEffect(() => {
+
+        if (datas.length > 0) {
+
+            const index = datas.findIndex((data) => data.valor === periodoSelecionado);
+            setEhPrimeiroPeriodo(marcarPrimeiroPeriodo(index));
+            setEhUltimoPeriodo(marcarUltimoPeriodo(index));
+        }
+
+    }, [periodoSelecionado]);
 
     const { flexRowStyle, selectStyle } = styles;
     return (
         <div className='center' style={flexRowStyle}>
 
-            <ArrowButton type='left' handleButtonClick={onClickLeft} />
+            <ArrowButton type='left' handleButtonClick={onClickLeft} buttonDisabled={ehPrimeiroPeriodo} />
             <select className='browser-default'
                 style={selectStyle}
                 value={periodoSelecionado}
@@ -58,7 +75,7 @@ export default function Data({ carregarPeriodo }) {
                     })
                 }
             </select>
-            <ArrowButton type='right' handleButtonClick={onClickRight} />
+            <ArrowButton type='right' handleButtonClick={onClickRight} buttonDisabled={ehUltimoPeriodo} />
         </div >
     )
 }

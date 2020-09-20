@@ -3,6 +3,8 @@ import Data from './components/Data';
 import * as totalizador from './helper/totalizador';
 import * as api from './api/apiService';
 import Summary from './components/Summary';
+import Actions from './components/Actions';
+import Transactions from './components/Transactions';
 
 const somatorio_zerado = {
   lancamentos: 0,
@@ -14,13 +16,19 @@ const somatorio_zerado = {
 export default function App() {
 
   const [allTransactions, setAllTransactions] = useState([]);
+  const [filtredTransactions, setFilteredTransactions] = useState([]);
   const [somatorio, setSomatorio] = useState(somatorio_zerado);
   const [periodoCorrente, setPeriodoCorrente] = useState(null);
+  const [filtro, setFiltro] = useState('');
 
   const obterPeriodo = (periodo) => {
     setPeriodoCorrente(periodo);
 
   };
+
+  const handleFilter = (valor) => {
+    setFiltro(valor);
+  }
 
   useEffect(() => {
     const obterTransacoesAPI = async () => {
@@ -42,33 +50,37 @@ export default function App() {
 
   }, [periodoCorrente])
 
+  useEffect(() => {
+
+
+    if (filtro.trim() !== '') {
+      const textLowerCase = filtro.toLowerCase();
+
+      const newFiltredTransactions = allTransactions.filter((t) => {
+        return t.description.toLowerCase().includes(textLowerCase);
+      });
+
+      setFilteredTransactions(newFiltredTransactions);
+    }
+    else {
+      setFilteredTransactions([...allTransactions]);
+    }
+    console.log(filtro);
+    console.log(allTransactions);
+
+  }, [filtro, allTransactions]);
+
   return (
     <div className='container'>
-      <h2 className="center">Bootcamp Full Stack - Desafio final</h2>
-      <div className="container center">
+      <div>
+        <h2 className="center">Bootcamp Full Stack - Desafio final</h2>
         <h3 className="center">Controle Financeiro Pessoal</h3>
       </div>
 
       <Data carregarPeriodo={obterPeriodo} />
       <Summary somatorio={somatorio} />
-      <div id='novoEFiltro'>
-        <button>
-          + Novo Lançamento
-      </button>
-        <input type='text' placeholder="filtro"></input>
-      </div>
-      <div id='listagem'>
-        {(allTransactions && allTransactions.length > 0) && (
-          allTransactions.map((item) => {
-            return (<p key={item._id}>
-              Descrição: {item.description}<br />
-              Categoria: {item.category}<br />
-              Tipo: {item.type}<br />
-              Valor: {item.value}<br />
-            </p>)
-          })
-        )}
-      </div>
+      <Actions handleFilter={handleFilter} />
+      <Transactions transactions={filtredTransactions} />
     </div>
   );
 }

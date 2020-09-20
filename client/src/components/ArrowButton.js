@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function ArrowButton({ type, handleButtonClick }) {
+export default function ArrowButton({ type, handleButtonClick, buttonDisabled }) {
     return (
         <button
             className='waves-effect waves-light btn'
@@ -9,7 +9,8 @@ export default function ArrowButton({ type, handleButtonClick }) {
                 marginRight: '5px',
                 fontWeight: 'bold',
             }}
-            onClick={handleButtonClick}>
+            onClick={handleButtonClick}
+            disabled={buttonDisabled}>
             {type === 'left' ? '<' : '>'}
         </button>
     )
