@@ -17,7 +17,7 @@ const getAllTransactions = async (periodo) => {
 
 const deleteTransaction = async (id) => {
     try {
-        await axios(`${URL}/${id}`);
+        await axios.delete(`${URL}/${id}`);
         return;
 
     } catch (error) {

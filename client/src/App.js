@@ -5,6 +5,7 @@ import * as api from './api/apiService';
 import Summary from './components/Summary';
 import Actions from './components/Actions';
 import Transactions from './components/Transactions';
+import ModalTransaction from './components/ModalTransaction';
 
 const somatorio_zerado = {
   lancamentos: 0,
@@ -21,6 +22,7 @@ export default function App() {
   const [somatorio, setSomatorio] = useState(somatorio_zerado);
   const [periodoCorrente, setPeriodoCorrente] = useState(null);
   const [filtro, setFiltro] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const obterPeriodo = (periodo) => {
     setPeriodoCorrente(periodo);
@@ -48,7 +50,13 @@ export default function App() {
     );
 
     setSelectedTransaction(newSelectedTransaction);
+    console.log(newSelectedTransaction);
     //setIsModalOpen(true);
+  };
+
+  const handleInsertTransaction = () => {
+    setSelectedTransaction(null);
+    setIsModalOpen(true);
   };
 
   useEffect(() => {
@@ -87,6 +95,11 @@ export default function App() {
 
   useEffect(() => {
 
+    if (filtredTransactions.length === 0) {
+      setSomatorio(somatorio_zerado);
+      return;
+    }
+
     const somatorio_aux = totalizador.calcular(filtredTransactions);
     setSomatorio(somatorio_aux);
 
@@ -101,9 +114,16 @@ export default function App() {
 
       <Data carregarPeriodo={obterPeriodo} />
       <Summary somatorio={somatorio} />
-      <Actions handleFilter={handleFilter} filterText={filtro} />
+      <Actions handleFilter={handleFilter} filterText={filtro} onNewTransaction={handleInsertTransaction} />
       <Transactions transactions={filtredTransactions} onDeleteTransaction={handleDeleteTransaction}
         onEditTransaction={handleEditTransaction} />
+
+      {isModalOpen && (
+        <ModalTransaction
+
+          selectedTransaction={selectedTransaction}
+        />
+      )}
     </div>
   );
 }
