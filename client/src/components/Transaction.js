@@ -1,11 +1,24 @@
 import React from 'react'
 import { formatNumber } from '../helper/utils';
+import Action from '../components/Action';
 
 const EARNING_COLOR = '#A1F0DC';
 const EXPENSE_COLOR = '#F0A1A8';
 
-export default function Transaction({ transaction, differentDay }) {
+export default function Transaction({ transaction, differentDay, onDelete,
+    onEdit, }) {
     const { _id, description, day, value, category } = transaction;
+    const handleActionClick = (type) => {
+        if (type === 'edit') {
+            onEdit(_id);
+            return;
+        }
+
+        if (type === 'delete') {
+            onDelete(_id);
+            return;
+        }
+    };
     const {
         transactionStyle,
         earningStyle,
@@ -38,6 +51,10 @@ export default function Transaction({ transaction, differentDay }) {
                     <span style={descriptionStyle}>{description}</span>
                 </div>
                 <span style={valueStyle}>{formatNumber(value)}</span>
+            </div>
+            <div style={actionsStyle}>
+                <Action type='edit' onActionClick={handleActionClick} />
+                <Action type='delete' onActionClick={handleActionClick} />
             </div>
         </div>
     )

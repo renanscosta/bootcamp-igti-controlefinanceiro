@@ -1,8 +1,16 @@
 import React from 'react'
 import Transaction from './Transaction';
 
-export default function Transactions({ transactions }) {
+export default function Transactions({ transactions, onDeleteTransaction,
+    onEditTransaction, }) {
     let currentDay = 1;
+    const handleDelete = (id) => {
+        onDeleteTransaction(id);
+    };
+
+    const handleEdit = (id) => {
+        onEditTransaction(id);
+    };
     return (
         <div className='center' style={styles.transactionsStyle}>
             {(transactions && transactions.length > 0) && (
@@ -19,6 +27,8 @@ export default function Transactions({ transactions }) {
                         key={_id}
                         transaction={item}
                         differentDay={differentDay}
+                        onDelete={handleDelete}
+                        onEdit={handleEdit}
                     />)
                 })
             )

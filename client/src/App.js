@@ -17,6 +17,7 @@ export default function App() {
 
   const [allTransactions, setAllTransactions] = useState([]);
   const [filtredTransactions, setFilteredTransactions] = useState([]);
+  const [selectedTransaction, setSelectedTransaction] = useState(null);
   const [somatorio, setSomatorio] = useState(somatorio_zerado);
   const [periodoCorrente, setPeriodoCorrente] = useState(null);
   const [filtro, setFiltro] = useState('');
@@ -30,6 +31,26 @@ export default function App() {
     setFiltro(valor);
   }
 
+  const handleDeleteTransaction = async (id) => {
+    await api.deleteTransaction(id);
+
+    const newTransactions = allTransactions.filter(
+      (transaction) => transaction._id !== id
+    );
+
+    setAllTransactions(newTransactions);
+    setFilteredTransactions(newTransactions);
+  };
+
+  const handleEditTransaction = (id) => {
+    const newSelectedTransaction = allTransactions.find(
+      (transaction) => transaction._id === id
+    );
+
+    setSelectedTransaction(newSelectedTransaction);
+    //setIsModalOpen(true);
+  };
+
   useEffect(() => {
     const obterTransacoesAPI = async () => {
 
@@ -42,16 +63,12 @@ export default function App() {
       const transacoes = await api.getAllTransactions(periodoCorrente);
       setAllTransactions(transacoes);
 
-      const somatorio_aux = totalizador.calcular(transacoes);
-      setSomatorio(somatorio_aux);
-
     }
     obterTransacoesAPI(periodoCorrente);
 
   }, [periodoCorrente])
 
   useEffect(() => {
-
 
     if (filtro.trim() !== '') {
       const textLowerCase = filtro.toLowerCase();
@@ -65,22 +82,28 @@ export default function App() {
     else {
       setFilteredTransactions([...allTransactions]);
     }
-    console.log(filtro);
-    console.log(allTransactions);
 
   }, [filtro, allTransactions]);
+
+  useEffect(() => {
+
+    const somatorio_aux = totalizador.calcular(filtredTransactions);
+    setSomatorio(somatorio_aux);
+
+  }, [filtredTransactions]);
 
   return (
     <div className='container'>
       <div>
-        <h2 className="center">Bootcamp Full Stack - Desafio final</h2>
+        <h2 className="center">Bootcamp Full Stack - Desafio finalteste</h2>
         <h3 className="center">Controle Financeiro Pessoal</h3>
       </div>
 
       <Data carregarPeriodo={obterPeriodo} />
       <Summary somatorio={somatorio} />
-      <Actions handleFilter={handleFilter} />
-      <Transactions transactions={filtredTransactions} />
+      <Actions handleFilter={handleFilter} filterText={filtro} />
+      <Transactions transactions={filtredTransactions} onDeleteTransaction={handleDeleteTransaction}
+        onEditTransaction={handleEditTransaction} />
     </div>
   );
 }

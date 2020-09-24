@@ -15,4 +15,14 @@ const getAllTransactions = async (periodo) => {
     }
 }
 
-export { getAllTransactions }
+const deleteTransaction = async (id) => {
+    try {
+        await axios(`${URL}/${id}`);
+        return;
+
+    } catch (error) {
+        return null;
+    }
+}
+
+export { getAllTransactions, deleteTransaction }

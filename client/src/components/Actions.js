@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function Actions({ handleFilter }) {
+export default function Actions({ handleFilter, filterText }) {
 
     const handleTextFilter = (event) => {
         console.log(event.target.value)
@@ -10,7 +10,8 @@ export default function Actions({ handleFilter }) {
     const { containerStyle, inputStyle } = styles;
     return (
         <div style={containerStyle}>
-            <button className='waves-effect waves-light btn'>
+            <button className='waves-effect waves-light btn'
+                disabled={filterText.trim() !== ''}>
                 + Novo Lançamento
             </button>
             <div className='input-field' style={inputStyle}>
