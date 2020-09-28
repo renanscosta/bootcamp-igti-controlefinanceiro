@@ -14,6 +14,12 @@ const somatorio_zerado = {
   saldo: 0
 }
 
+function sortTransactions(transactions) {
+  return transactions.sort((a, b) =>
+    a.yearMonthDay.localeCompare(b.yearMonthDay)
+  );
+}
+
 export default function App() {
 
   const [allTransactions, setAllTransactions] = useState([]);
@@ -51,12 +57,48 @@ export default function App() {
 
     setSelectedTransaction(newSelectedTransaction);
     console.log(newSelectedTransaction);
-    //setIsModalOpen(true);
+    setIsModalOpen(true);
   };
 
   const handleInsertTransaction = () => {
     setSelectedTransaction(null);
     setIsModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setSelectedTransaction(null);
+    setIsModalOpen(false);
+  };
+
+  const handleModalSave = async (newTransaction, mode) => {
+    setIsModalOpen(false);
+
+    if (mode === 'insert') {
+      const postedTransaction = await api.postTransaction(newTransaction);
+
+      let newTransactions = [...allTransactions, postedTransaction];
+      newTransactions = sortTransactions(newTransactions);
+      setAllTransactions(newTransactions);
+      setFilteredTransactions(newTransactions);
+      setSelectedTransaction(null);
+
+      return;
+    }
+
+    if (mode === 'edit') {
+      const updatedTransaction = await api.updateTransaction(newTransaction);
+      const newTransactions = [...allTransactions];
+
+      const index = newTransactions.findIndex(
+        (transaction) => transaction.id === newTransaction.id
+      );
+
+      newTransactions[index] = updatedTransaction;
+      setAllTransactions(newTransactions);
+      setFilteredTransactions(newTransactions);
+
+      return;
+    }
   };
 
   useEffect(() => {
@@ -112,16 +154,32 @@ export default function App() {
         <h3 className="center">Controle Financeiro Pessoal</h3>
       </div>
 
-      <Data carregarPeriodo={obterPeriodo} />
-      <Summary somatorio={somatorio} />
-      <Actions handleFilter={handleFilter} filterText={filtro} onNewTransaction={handleInsertTransaction} />
-      <Transactions transactions={filtredTransactions} onDeleteTransaction={handleDeleteTransaction}
-        onEditTransaction={handleEditTransaction} />
+      {!isModalOpen && (
+        <Data carregarPeriodo={obterPeriodo} />
+      )}
+
+      {allTransactions.length > 0 && (
+        <>
+          <Summary somatorio={somatorio} />
+          {!isModalOpen && (
+            <Actions handleFilter={handleFilter}
+              filterText={filtro}
+              onNewTransaction={handleInsertTransaction}
+              isModalOpen={isModalOpen} />
+          )}
+          <Transactions
+            transactions={filtredTransactions}
+            onDeleteTransaction={handleDeleteTransaction}
+            onEditTransaction={handleEditTransaction} />
+        </>
+      )}
 
       {isModalOpen && (
         <ModalTransaction
-
+          isOpen={isModalOpen}
           selectedTransaction={selectedTransaction}
+          onClose={handleModalClose}
+          onSave={handleModalSave}
         />
       )}
     </div>

@@ -25,4 +25,25 @@ const deleteTransaction = async (id) => {
     }
 }
 
-export { getAllTransactions, deleteTransaction }
+const postTransaction = async (transaction) => {
+    try {
+        const newTransaction = await axios.post(`${URL}/`, transaction);
+        return newTransaction;
+
+    } catch (error) {
+        return null;
+    }
+}
+
+async function updateTransaction(transaction) {
+
+    try {
+
+        await axios.put(`${URL}/${transaction._id}`, transaction);
+    }
+    catch (err) {
+        return null;
+    }
+}
+
+export { getAllTransactions, deleteTransaction, postTransaction, updateTransaction }
