@@ -93,7 +93,7 @@ export default function ModalTransaction({ isOpen,
                 type,
             }
             : {
-                id: selectedTransaction.id,
+                _id: selectedTransaction._id,
                 description,
                 value,
                 yearMonthDay: date,

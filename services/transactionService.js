@@ -60,7 +60,7 @@ const create = async (req, res) => {
                 });
         }
 
-        transaction = new TransactionModel(utils.fillDates(transaction));
+        transaction = new TransactionModel(transaction);
 
         const entity = await transaction.save();
         res.status(201)
@@ -87,8 +87,6 @@ const update = async (req, res) => {
                     logs: logs
                 });
         }
-
-        transaction = utils.fillDates(transaction);
 
         const entity = await TransactionModel.findByIdAndUpdate({ _id: id }, transaction, { new: true });
         res.status(200)

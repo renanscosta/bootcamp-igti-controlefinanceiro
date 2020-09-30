@@ -6,6 +6,7 @@ import Summary from './components/Summary';
 import Actions from './components/Actions';
 import Transactions from './components/Transactions';
 import ModalTransaction from './components/ModalTransaction';
+import Waiting from './components/Waiting';
 
 const somatorio_zerado = {
   lancamentos: 0,
@@ -26,7 +27,7 @@ export default function App() {
   const [filtredTransactions, setFilteredTransactions] = useState([]);
   const [selectedTransaction, setSelectedTransaction] = useState(null);
   const [somatorio, setSomatorio] = useState(somatorio_zerado);
-  const [periodoCorrente, setPeriodoCorrente] = useState(null);
+  const [periodoCorrente, setPeriodoCorrente] = useState('--');
   const [filtro, setFiltro] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -56,7 +57,6 @@ export default function App() {
     );
 
     setSelectedTransaction(newSelectedTransaction);
-    console.log(newSelectedTransaction);
     setIsModalOpen(true);
   };
 
@@ -72,7 +72,6 @@ export default function App() {
 
   const handleModalSave = async (newTransaction, mode) => {
     setIsModalOpen(false);
-
     if (mode === 'insert') {
       const postedTransaction = await api.postTransaction(newTransaction);
 
@@ -90,7 +89,7 @@ export default function App() {
       const newTransactions = [...allTransactions];
 
       const index = newTransactions.findIndex(
-        (transaction) => transaction.id === newTransaction.id
+        (transaction) => transaction._id === newTransaction._id
       );
 
       newTransactions[index] = updatedTransaction;
@@ -150,13 +149,15 @@ export default function App() {
   return (
     <div className='container'>
       <div>
-        <h2 className="center">Bootcamp Full Stack - Desafio finalteste</h2>
+        <h2 className="center">Bootcamp Full Stack - Desafio final</h2>
         <h3 className="center">Controle Financeiro Pessoal</h3>
       </div>
 
       {!isModalOpen && (
-        <Data carregarPeriodo={obterPeriodo} />
+        <Data carregarPeriodo={obterPeriodo} peridoAnterior={periodoCorrente} />
       )}
+
+      {/* {allTransactions.length === 0 && <Waiting>Aguarde...</Waiting>} */}
 
       {allTransactions.length > 0 && (
         <>

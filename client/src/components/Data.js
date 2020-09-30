@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import * as utils from '../helper/utils';
 import ArrowButton from './ArrowButton';
 
-export default function Data({ carregarPeriodo }) {
+export default function Data({ carregarPeriodo, peridoAnterior }) {
 
     const [datas, setDatas] = useState([]);
     const [periodoSelecionado, setPeriodoSelecionado] = useState('--');
@@ -41,17 +41,25 @@ export default function Data({ carregarPeriodo }) {
     }
 
     useEffect(() => {
+        setPeriodoSelecionado(peridoAnterior);
         setDatas(utils.gerarDatas());
         setEhPrimeiroPeriodo(true);
+
     }, []);
 
     useEffect(() => {
 
         if (datas.length > 0) {
-
             const index = datas.findIndex((data) => data.valor === periodoSelecionado);
-            setEhPrimeiroPeriodo(marcarPrimeiroPeriodo(index));
-            setEhUltimoPeriodo(marcarUltimoPeriodo(index));
+
+            if (index < 0) {
+                setPeriodoSelecionado(true);
+            } else {
+
+                setEhPrimeiroPeriodo(marcarPrimeiroPeriodo(index));
+                setEhUltimoPeriodo(marcarUltimoPeriodo(index));
+            }
+
         }
 
     }, [periodoSelecionado]);
@@ -66,10 +74,10 @@ export default function Data({ carregarPeriodo }) {
                 value={periodoSelecionado}
                 onChange={onChangePeriodoConsulta}>
                 {
-                    datas.map((data) => {
+                    datas.map((data, chave) => {
                         const { valor, display } = data
                         return (
-                            <option key={valor} value={valor}>{display}</option>
+                            <option key={chave} value={valor}>{display}</option>
                         )
                     })
                 }
