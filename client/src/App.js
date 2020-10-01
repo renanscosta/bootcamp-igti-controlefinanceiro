@@ -22,12 +22,14 @@ function sortTransactions(transactions) {
 }
 
 export default function App() {
+  const dtHoje = new Date();
+  const hoje = `${dtHoje.getFullYear().toString()}-${(dtHoje.getMonth() + 1).toString().padStart(2, '0')}`;
 
   const [allTransactions, setAllTransactions] = useState([]);
   const [filtredTransactions, setFilteredTransactions] = useState([]);
   const [selectedTransaction, setSelectedTransaction] = useState(null);
   const [somatorio, setSomatorio] = useState(somatorio_zerado);
-  const [periodoCorrente, setPeriodoCorrente] = useState('--');
+  const [periodoCorrente, setPeriodoCorrente] = useState(hoje);
   const [filtro, setFiltro] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -109,10 +111,14 @@ export default function App() {
         return;
       }
 
+      setAllTransactions([]);
+      setSomatorio(somatorio_zerado)
+
       const transacoes = await api.getAllTransactions(periodoCorrente);
-      setAllTransactions(transacoes);
+      setAllTransactions(sortTransactions(transacoes));
 
     }
+
     obterTransacoesAPI(periodoCorrente);
 
   }, [periodoCorrente])
@@ -157,7 +163,7 @@ export default function App() {
         <Data carregarPeriodo={obterPeriodo} peridoAnterior={periodoCorrente} />
       )}
 
-      {/* {allTransactions.length === 0 && <Waiting>Aguarde...</Waiting>} */}
+      {allTransactions.length === 0 && <Waiting>Aguarde...</Waiting>}
 
       {allTransactions.length > 0 && (
         <>

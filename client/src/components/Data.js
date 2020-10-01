@@ -4,8 +4,12 @@ import ArrowButton from './ArrowButton';
 
 export default function Data({ carregarPeriodo, peridoAnterior }) {
 
+    const dtHoje = new Date();
+    const hoje = `${dtHoje.getFullYear().toString()}-${(dtHoje.getMonth() + 1).toString().padStart(2, '0')}`;
+
+
     const [datas, setDatas] = useState([]);
-    const [periodoSelecionado, setPeriodoSelecionado] = useState('--');
+    const [periodoSelecionado, setPeriodoSelecionado] = useState(hoje);
     const [ehPrimeiroPeriodo, setEhPrimeiroPeriodo] = useState(false);
     const [ehUltimoPeriodo, setEhUltimoPeriodo] = useState(false);
 
@@ -43,7 +47,7 @@ export default function Data({ carregarPeriodo, peridoAnterior }) {
     useEffect(() => {
         setPeriodoSelecionado(peridoAnterior);
         setDatas(utils.gerarDatas());
-        setEhPrimeiroPeriodo(true);
+        //setEhPrimeiroPeriodo(true);
 
     }, []);
 

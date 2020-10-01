@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const URL = 'http://localhost:3001/api/transaction'
+const api = axios.create({ baseURL: 'api' });
+const RESOURCE = '/transaction'
 
 
 function getCompleteTransaction(transaction) {
@@ -8,12 +9,14 @@ function getCompleteTransaction(transaction) {
     const year = +yearMonthDay.substring(0, 4);
     const month = +yearMonthDay.substring(5, 7);
     const day = +yearMonthDay.substring(8, 10);
+    const yearMonth = `${year}-${month}`;
 
     const completeTransaction = {
         ...transaction,
         year,
         month,
         day,
+        yearMonth,
     };
 
     return completeTransaction;
@@ -23,7 +26,7 @@ const getAllTransactions = async (periodo) => {
 
     try {
 
-        const response = await axios.get(`${URL}?period=${periodo}`);
+        const response = await api.get(`${RESOURCE}?period=${periodo}`);
         return response.data;
     }
     catch (error) {
@@ -33,7 +36,7 @@ const getAllTransactions = async (periodo) => {
 
 const deleteTransaction = async (id) => {
     try {
-        await axios.delete(`${URL}/${id}`);
+        await api.delete(`${RESOURCE}/${id}`);
         return;
 
     } catch (error) {
@@ -44,7 +47,7 @@ const deleteTransaction = async (id) => {
 const postTransaction = async (transaction) => {
     try {
         const transacaoFormatada = getCompleteTransaction(transaction);
-        const newTransaction = await axios.post(`${URL}/`, transacaoFormatada);
+        const newTransaction = await api.post(`${RESOURCE}/`, transacaoFormatada);
         return newTransaction.data;
 
     } catch (error) {
@@ -57,8 +60,7 @@ async function updateTransaction(transaction) {
 
     try {
         const transacaoFormatada = getCompleteTransaction(transaction);
-        console.log(transacaoFormatada);
-        const transactionUpdate = await axios.put(`${URL}/${transaction._id}`, transacaoFormatada);
+        const transactionUpdate = await api.put(`${RESOURCE}/${transaction._id}`, transacaoFormatada);
         return transactionUpdate.data;
     }
     catch (err) {

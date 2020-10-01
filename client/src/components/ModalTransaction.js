@@ -37,7 +37,6 @@ export default function ModalTransaction({ isOpen,
 
     useEffect(() => {
 
-        console.log(selectedTransaction);
         if (!selectedTransaction) {
             setMode('insert');
             return;
